@@ -36,19 +36,23 @@ void loop() {
   myservo.attach(PIN_SERVO); 
   float raw_dist = ir_distance();
   float dist_cali = 100 + 300.0 / (b - a) * (raw_dist - a);
+  
   if (dist_ema == 0){
     dist_ema = dist_cali;
   }
   else{
     dist_ema = alpha * dist_cali + (1-alpha) * dist_ema;
   }
+  
   Serial.print("min:0,max:410,dist_cali:");
   Serial.print(dist_cali);
   Serial.print(",dist_ema:");
   Serial.println(dist_ema + 100);
+  
   if(raw_dist > 156 && raw_dist <224) digitalWrite(PIN_LED, 0);
   else digitalWrite(PIN_LED, 255);
-  if (raw_dist > 255){
+  
+  if (dist_ema > 255){
     myservo.writeMicroseconds(1115);
   }
   else{
